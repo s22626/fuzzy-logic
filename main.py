@@ -4,6 +4,7 @@ from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 from tradingview_ta import TA_Handler, Interval
 
+# Initialize a TradingView Technical Analysis handler for gold (XAUUSD)
 gold_handler = TA_Handler(
     symbol="XAUUSD",
     exchange="OANDA",
@@ -12,7 +13,7 @@ gold_handler = TA_Handler(
     timeout=10
 )
 
-# Fetch the technical analysis data
+# Fetch the technical analysis data for gold
 gold_data = gold_handler.get_analysis()
 
 # Input variables
@@ -42,7 +43,7 @@ decision['sell'] = fuzz.trimf(decision.universe, [0, 30, 60])
 decision['hold'] = fuzz.trimf(decision.universe, [30, 60, 90])
 decision['buy'] = fuzz.trimf(decision.universe, [60, 90, 100])
 
-# Rules
+# Rules defining the decision-making logic
 rule1 = ctrl.Rule(rsi['low'] & adx['weak_trend'] & CCI20['over_sold'], decision['buy'])
 rule2 = ctrl.Rule(rsi['low'] & adx['weak_trend'] & CCI20['normal'], decision['hold'])
 rule3 = ctrl.Rule(rsi['low'] & adx['weak_trend'] & CCI20['over_bought'], decision['sell'])
@@ -59,22 +60,22 @@ rule10 = ctrl.Rule(rsi['high'] & adx['very_strong_trend'] & CCI20['over_sold'], 
 rule11 = ctrl.Rule(rsi['high'] & adx['very_strong_trend'] & CCI20['normal'], decision['hold'])
 rule12 = ctrl.Rule(rsi['high'] & adx['very_strong_trend'] & CCI20['over_bought'], decision['sell'])
 
-# Control system
+# Control system composed of the defined rules
 decision_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12])
 decision_simulation = ctrl.ControlSystemSimulation(decision_ctrl)
 
-# Set inputs
+# Set inputs to the system based on the fetched technical analysis data
 decision_simulation.input['rsi'] = gold_data.indicators.get("RSI")
 decision_simulation.input['adx'] = gold_data.indicators.get("ADX")
 decision_simulation.input['CCI20'] = gold_data.indicators.get("CCI20")
 
-# Compute the decision
+# Compute the decision using the defined rules and inputs
 decision_simulation.compute()
 
-# Print the decision
+# Print the computed decision value
 print("Decision:", decision_simulation.output['decision'])
 
-# Determine the linguistic label of the decision
+# Determine the linguistic label of the decision based on the computed value
 decision_label = None
 if decision_simulation.output['decision'] <= 30:
     decision_label = "sell"
