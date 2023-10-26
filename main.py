@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from tradingview_ta import TA_Handler, Interval
 
 gold_handler = TA_Handler(
-    symbol="XAUUSD",  # XAUUSD is the symbol for gold
+    symbol="XAUUSD",
     exchange="OANDA",
     screener="cfd",
-    interval=Interval.INTERVAL_1_MINUTE,  # You can change the interval as needed
+    interval=Interval.INTERVAL_1_HOUR_MINUTE,
     timeout=10
 )
 
